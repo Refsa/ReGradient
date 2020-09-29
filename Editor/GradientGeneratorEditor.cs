@@ -125,17 +125,17 @@ namespace Refsa.ReGradient
                 float aspect = (float)currentGradient.Size.x / (float)currentGradient.Size.y;
                 float width = height * aspect;
                 Rect previewRect = GUILayoutUtility.GetRect(width - 32, height);
-                EditorGUI.DrawTextureTransparent(previewRect, previewTexture, ScaleMode.ScaleToFit);
+                EditorGUI.DrawTextureTransparent(previewRect, previewTexture, ScaleMode.StretchToFill);
 
                 Rect sliderRect = GUILayoutUtility.GetRect(width, 32);
                 Vector2 nodeSize = Vector2.one * 32;
-                GUIStyle nodeHandleStyle = new GUIStyle(GUI.skin.button);
+                
                 bool nodeActionUsed = false;
                 for (int i = currentGradient.Nodes.Count - 1; i >= 0; i--)
                 {
                     var node = currentGradient.Nodes[i];
-                    float xpos = node.Percent * width;
-                    Vector2 pos = new Vector2(sliderRect.x + xpos, sliderRect.y);
+                    float xpos = node.Percent * sliderRect.width;
+                    Vector2 pos = new Vector2(xpos - 16, sliderRect.y);
                     Rect nodeRect = new Rect(pos, nodeSize);
 
                     if (selectedNode == i)
