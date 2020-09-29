@@ -208,7 +208,7 @@ namespace Refsa.ReGradient
                 }
 
                 EditorGUILayout.Space(25f);
-                if (selectedNode != -1 && selectedNode < currentGradient.Nodes.Count)
+                if (selectedNode != -1 && selectedNode < currentGradient.Nodes.Count && !nodeActionUsed)
                 {
                     var currentNode = currentGradient.Nodes[selectedNode];
                     EditorGUI.BeginChangeCheck();
