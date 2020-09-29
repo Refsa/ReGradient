@@ -1,0 +1,48 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel GradientGen
+
+struct GradientNode
+{
+    float4 Color;
+    float Percent;
+    float ID;
+};
+
+StructuredBuffer<GradientNode> _GradientNodes;
+
+float2 _Size;
+int _NodeCount;
+RWTexture2D<float4> _Result;
+
+float Remap(float input, float oldMin, float oldMax, float newMin, float newMax)
+{
+	return newMin + (input - oldMin) * (newMax - newMin) / (oldMax - oldMin);
+}
+
+[numthreads(32,1,1)]
+void GradientGen (uint3 id : SV_DispatchThreadID)
+{
+    if (_NodeCount == 0) return;
+
+    float percent = saturate(id.x / _Size.x);
+
+    float4 color = _GradientNodes[0].Color; 
+    float prev = _GradientNodes[0].Percent;
+    for (int j = 1; j < _NodeCount; j++)
+    {
+        float curr = _GradientNodes[j].Percent;
+
+        float t = saturate(Remap(percent, prev, curr, 0, 1));
+
+        color = lerp(color, _GradientNodes[j].Color, t);
+        prev = curr;
+    }
+
+    float2 uv = float2(id.x, 0);
+    for (int i = 0; i < _Size.y; i++)
+    {
+        uv.y = i;
+
+        _Result[uv] = color;
+    }
+}
